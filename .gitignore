@@ -1,0 +1,5 @@
+images/
+*.jpg
+*.jpeg
+*.json
+*.pyc
