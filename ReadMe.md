@@ -1,6 +1,6 @@
 # STATIC-GOOGLEMAP-DOWNLOADER
 
-Static-GoogleMap-Downloader can download google map images tiles and stiching them together to a big image.
+Static-GoogleMap-Downloader can download google map image tiles and stiching them together into a big image.
 
 
 ## Usage
