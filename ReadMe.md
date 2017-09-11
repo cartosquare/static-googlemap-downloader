@@ -55,6 +55,9 @@ python app.py [config.json]
 
     The factor to scale output image, could be 1 or 2.
 
+* tif_output
+    Output GeoTiff format result, this format contains geo coordinates system, can be viewd on the map.
+
 * resume
 
     Resume downloading or not.
