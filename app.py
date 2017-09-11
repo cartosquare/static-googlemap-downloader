@@ -64,6 +64,10 @@ def parse_options(config_file):
             "value": 23,
             "type": int
         },
+        "tif_output": {
+            "value": False,
+            "type": bool
+        },
         "resume":{
             "value": False,
             "type": bool
@@ -203,11 +207,12 @@ if __name__=='__main__':
     radius = get_value(params, "radius")
     bottom_crop = get_value(params, "bottom_crop")
     KEY = get_value(params, "key")
+    tif_output = get_value(params, "tif_output")
     resume = get_value(params, "resume")
     image_size = 256
     scale = get_value(params, "scale")
     debug = get_value(params, "debug")
-    if google_image_folder is None or output_jpeg_file is None or map_type is None or format is None or tz is None or lon is None or lat is None or radius is None or bottom_crop is None or KEY is None or image_size is None or scale is None or resume is None or debug is None:
+    if google_image_folder is None or output_jpeg_file is None or map_type is None or format is None or tz is None or lon is None or lat is None or radius is None or bottom_crop is None or KEY is None or image_size is None or scale is None or resume is None or debug is None or tif_output is None:
         print("invalid parameter exists!")
         exit()
     actual_tile_size = image_size * scale 
@@ -259,8 +264,25 @@ if __name__=='__main__':
     for tile_pair in tile_list:
         merge_images(tile_pair)
 
-    print("saving ...")
+    print("saving image ...")
     new_im.save(output_jpeg_file, "JPEG")
+
+    if tif_output:
+        # to geotif
+        lefttop_minlat, lefttop_minlon, lefttop_maxlat, lefttop_maxlon = mercator.TileLatLonBounds(tminx, tminy, tz)
+        rightbottom_minlat, rightbottom_minlon, rightbottom_maxlat, rightbottom_maxlon = mercator.TileLatLonBounds(tmaxx, tmaxy, tz)
+
+        minlat = lefttop_minlat if lefttop_minlat < rightbottom_minlat else rightbottom_minlat
+        minlon = lefttop_minlon if lefttop_minlon < rightbottom_minlon else rightbottom_minlon
+        maxlat = lefttop_maxlat if lefttop_maxlat > rightbottom_maxlat else rightbottom_maxlat
+        maxlon = lefttop_maxlon if lefttop_maxlon > rightbottom_maxlon else rightbottom_maxlon
+        debug_print("image range: %f %f %f %f" % (minlat, minlon, maxlat, maxlon))
+
+        output_file = output_jpeg_file.split(".")[0] + ".tif"
+        command = 'gdal_translate -of Gtiff -a_ullr %f %f %f %f -a_srs EPSG:4326 %s %s' % (minlon, maxlat, maxlon, minlat, output_jpeg_file, output_file)
+        debug_print(command)
+        execute_system_command(command)
+
     print("finish!")
     # End of main function
 # End of program
