@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #######################################################3
-# xuxiang@sensetime.com
+# 1517374954@qq.com
 # 2017.9.7
 # 
 # for more usage details, refer to http://blog.csdn.net/u011393661/article/details/14053113 
